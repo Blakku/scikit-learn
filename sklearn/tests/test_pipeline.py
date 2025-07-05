@@ -2397,7 +2397,24 @@ def test_feature_union_metadata_routing(transformer):
                 parent="fit",
                 **kwargs,
             )
+def test_pipeline_preserves_feature_names_out():
+    """Check that Pipeline preserves feature names out from transformer."""
 
+    X = np.array([[1, 2], [3, 4], [5, 6]])
+    y = [0, 1, 0]
+
+    pipeline = Pipeline([
+        ("scaler", StandardScaler()),
+        ("classifier", LogisticRegression())
+    ])
+
+    pipeline.fit(X, y)
+
+    # Get feature names from the transformer step
+    feature_names = pipeline.named_steps["scaler"].get_feature_names_out()
+
+    assert isinstance(feature_names, np.ndarray)
+    assert len(feature_names) == X.shape[1]
 
 # End of routing tests
 # ====================
